@@ -1,11 +1,15 @@
 {
   "version": 2,
-  "functions": {
-    "server.js": {
-      "runtime": "@vercel/node"
+  "builds": [
+    {
+      "src": "public/index.html",
+      "use": "@vercel/static"
     }
-  },
+  ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "server.js" }
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
+    }
   ]
 }
