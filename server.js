@@ -73,7 +73,7 @@ app.post("/api/ask", async (req, res) => {
 
 // 🔹 기본 페이지 라우트
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index2.html"));
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // ✅ 서버 실행
