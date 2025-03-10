@@ -11,18 +11,18 @@ app.use(cors());
 // 🔹 정적 파일 제공 (프론트엔드 파일)
 app.use(express.static(path.join(__dirname, "public")));
 
-const PORT = 3000;
-const API_KEY = process.env.API_KEY; // 🔥 .env에서 API Key 가져오기
+const API_KEY = process.env.API_KEY; // 🔥 환경 변수에서 API Key 가져오기
 
 // ✅ API Key가 없으면 서버 실행을 막음
 if (!API_KEY) {
-    console.error("❌ API Key가 설정되지 않았습니다! .env 파일을 확인하세요.");
+    console.error("❌ API Key가 설정되지 않았습니다! Vercel 환경 변수를 확인하세요.");
     process.exit(1); // 서버 종료
 }
 
 // 🔥 서버 시작 시 API Key 로드 확인 (실제 배포에서는 console.log 삭제 가능)
 console.log("✅ API Key Loaded:", API_KEY ? "✔ Key Loaded" : "❌ Key Not Found");
 
+// ✅ OpenAI API 호출하는 엔드포인트
 app.post("/api/ask", async (req, res) => {
     const userInput = req.body.userInput;
     
@@ -39,8 +39,8 @@ app.post("/api/ask", async (req, res) => {
                     {
                         role: "system",
                         content: `너는 임다균이라는 이름을 가진 24세 남자야. 장난기 있고 야한 농담과 저급한 유머를 좋아하며, 말끝에 "~잉", "~힝", "~가즈아","말도 안된다잉!!!" 
-                        을 자주 붙이는 등 장난스러운 말투를 사용해. 상대방 질문에 장난스럽고 유머러스하게 대답해줘. 너는 오토바이 배달맨이야
-                        여자친구를 만들고 싶어해서 친구가 여친 모집하는 광고 웹사이트를 만들어줬어  `
+                        을 자주 붙이는 등 장난스러운 말투를 사용해. 상대방 질문에 장난스럽고 유머러스하게 대답해줘. 너는 오토바이 배달맨이야.
+                        여자친구를 만들고 싶어해서 친구가 여친 모집하는 광고 웹사이트를 만들어줬어.`
                     },
                     {
                         role: "user",
@@ -52,7 +52,7 @@ app.post("/api/ask", async (req, res) => {
             },
             {
                 headers: {
-                    "Authorization": `Bearer ${API_KEY}`, // ✅ .env에서 불러온 API Key 사용
+                    "Authorization": `Bearer ${API_KEY}`, // ✅ 환경 변수에서 API Key 가져오기
                     "Content-Type": "application/json"
                 }
             }
@@ -71,10 +71,12 @@ app.post("/api/ask", async (req, res) => {
     }
 });
 
-// 🔹 기본 페이지 라우트
+// 🔹 기본 페이지 라우트 설정 (Vercel에서 정적 파일 제공)
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+    res.sendFile(path.resolve("public/index.html"));
 });
 
-// ✅ 서버 실행
-app.listen(PORT, () => console.log(`🚀 서버 실행 중: http://localhost:${PORT}`));
+// ❌ Vercel에서는 `app.listen(PORT, ...)`을 사용하면 안 됨!
+// ✅ 대신 `module.exports = app;`을 추가해야 Vercel이 자동으로 API를 실행함.
+module.exports = app;
+
